@@ -8,12 +8,16 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class ProjectContext : DbContext
     {
+        // Veritabanı ile bağlantı kurmamızı sağlıyor 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=Project;Trusted_Connection=True");//SQL Server objecte ne yazarsa onu yaz
         }
 
-        public DbSet<Car> Cars { get; set; }
+        // Veritabanındaki tablolarımız ile ilişki kurmamız için
+        // DbSet<Varlıklarımız> Veritabanında neye karışılık geliyorsa yanına onu yazıyoruz veritabanındaki adı ile 
+
+        public DbSet<Car> Cars { get; set; } // cars tablosu ile bağladımız varlığımız
         public DbSet<Color> Colors { get; set; }
         public DbSet<Brand> Brands { get; set; }
     }

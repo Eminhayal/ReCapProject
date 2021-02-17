@@ -1,5 +1,7 @@
-﻿using DataAccess.Abstract;
+﻿using Core.DataAccess.EntityFramework;
+using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,45 +11,18 @@ using System.Text;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfCarDal : ICarDal
+
+    // Oluşturduğumuz Ef baseyi buraya referans olarak verdik. 
+    // Generic yapıyı Ef'mize göre doldurduk ayrıca onun bir CarDal olduğunu belirttik.
+    // burada ki işlemler aslında Basede yönetiliyor 
+    //fakat consolumuzda yeni bir nesne newlediğimiz de () içine hangi Ef ile işlem yapmamızı istediğimizi sağlıyor.
+
+
+    public class EfCarDal : EfEntityRepositoryBase<Car, ProjectContext>, ICarDal
     {
-        public void Add(Car entity)
+        public List<CarDetailDto> GetCarDetails(Expression<Func<Car, bool>> filter = null)
         {
-            using (ProjectContext context = new ProjectContext())
-            {
-                var addedEntity = context.Entry(entity); // Referansı yakala , veritabaniyla iliskilendir.
-                addedEntity.State = EntityState.Added; // Ekleme , set et
-                context.SaveChanges(); // Değişikliği kaydet
-            }
-        }
-
-        public void Delete(Car entity)
-        {
-            using (ProjectContext context = new ProjectContext())
-            {
-                var deletedEntity = context.Entry(entity);
-                deletedEntity.State = EntityState.Deleted;
-                context.SaveChanges();
-            }
-        }
-
-        public List<Car> GetAll(Expression<Func<Car, bool>> filter = null)
-        {
-            using (ProjectContext context = new ProjectContext())
-            {
-                return filter == null ? context.Set<Car>().ToList()
-                    : context.Set<Car>().Where(filter).ToList();
-            }
-        }
-
-        public void Update(Car entity)
-        {
-            using (ProjectContext context = new ProjectContext())
-            {
-                var updatedEntity = context.Entry(entity);
-                updatedEntity.State = EntityState.Modified;
-                context.SaveChanges();
-            }
+            throw new NotImplementedException();
         }
     }
 }

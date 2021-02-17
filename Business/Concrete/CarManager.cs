@@ -1,9 +1,13 @@
 ﻿using Business.Abstract;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
+using Business.Constants;
 
 namespace Business.Concrete
 {
@@ -15,50 +19,60 @@ namespace Business.Concrete
         {
             _carDal= carDal;
         }
-
-        public void Add(Car car)
+        public IDataResult<List<CarDetailDto>> GetCarDetails(Expression<Func<Car, bool>> filter = null)
         {
-            if (car.DailyPrice > 0 &&  car.Description.Length> 2 )
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(filter));
+        }
+
+        IResult IBaseService<Car>.Add(Car car)
+        {
+            if (car.DailyPrice > 0 && car.Description.Length > 2)
             {
                 _carDal.Add(car);
-                Console.WriteLine("Araba başarı ile eklenmiştir.");
+                return new SuccessResult(Messages.Added);
             }
             else
             {
-                Console.WriteLine("Araba ekleme işlemi başarısız! Günlük fiyat 0'dan büyük olmalı ve araba ismi en az 2 karakterden oluşmalıdır");
+                return new ErrorResult(Messages.Failed);
             }
         }
 
-        public void Delete(Car car)
+        IResult IBaseService<Car>.Delete(Car car)
         {
             _carDal.Delete(car);
+            return new SuccessResult(Messages.Deleted);
         }
 
-        public List<Car> GetAll()
+        IDataResult<List<Car>> IBaseService<Car>.GetAll()
         {
-            return _carDal.GetAll();
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll());
         }
 
-        public List<Car> GetByDailyPrice(decimal min, decimal max)
+        IDataResult<List<Car>> ICarService.GetByDailyPrice(decimal min, decimal max)
         {
-            return _carDal.GetAll(c => c.DailyPrice >= min && c.DailyPrice <= max);
+            return new DataResult<List<Car>>( _carDal.GetAll(c => c.DailyPrice >= min && c.DailyPrice <= max),true);
         }
 
-        public List<Car> GetCarsByBrandId(int id)
+        IDataResult<List<Car>> ICarService.GetCarsByBrandId(int id)
         {
-            return _carDal.GetAll(p => p.BrandId == id);
+            return new DataResult<List<Car>>(_carDal.GetAll(p => p.BrandId == id), true);
         }
 
-        public List<Car> GetCarsByColorId(int id)
+        IDataResult<List<Car>> ICarService.GetCarsByColorId(int id)
         {
-            return _carDal.GetAll(p => p.ColorId == id);
+            return new DataResult<List<Car>>(_carDal.GetAll(c => c.ColorId == id), true);
         }
 
-        public void Update(Car car)
+        IResult IBaseService<Car>.Update(Car car)
         {
-            if (car.DailyPrice > 0 && car.Description.Length > 2 )
+            if (car.DailyPrice > 0)
             {
-                Console.WriteLine("Araba güncelleme işlemi başarısız! Günlük fiyat 0'dan büyük olmalı ve araba ismi en az 2 karakterden oluşmalıdır");
+                _carDal.Update(car);
+                return new SuccessResult(Messages.Updated);
+            }
+            else
+            {
+                return new ErrorResult(Messages.Failed);
             }
         }
     }

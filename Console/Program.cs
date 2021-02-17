@@ -1,8 +1,12 @@
-﻿using Business.Concrete;
+﻿using Business.Abstract;
+using Business.Concrete;
 using DataAccess.Concrete;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
+using System.Collections.Generic;
+
 
 namespace Console
 {
@@ -10,23 +14,21 @@ namespace Console
     {
         static void Main(string[] args)
         {
-            CarManager carManager1 = new CarManager(new EfCarDal());
-            //carManager1.Add(new Car {Id= 2 , BrandId= 2 , ColorId= 2 , DailyPrice= 500, Description="Spor Araba" , ModelYear= 2015});
+            //CarManager carManager = new CarManager(new EfCarDal());
+            //carManager.Add(new Car { Id= 1001 , Name= "BMW" , BrandId= 1 , ColorId = 1 ,
+            //    DailyPrice = 500 , ModelYear=2015, Description = "Spor Araba / Otomatik Vites"});
+            //foreach (var Cars in carManager.GetAll())
+            //{
+            //    System.Console.WriteLine(Cars.Name);
+            //}
+            IColorService ColorManager = new ColorManager(new EfColorDal());
 
-            foreach (var cars in carManager1.GetAll())
+            foreach (var colors in ColorManager.GetAll().Data)
             {
-                System.Console.WriteLine(cars.Id);
+                System.Console.WriteLine($"{colors.ColorId}\t{colors.ColorName}");
             }
-            BrandManager brandManager = new BrandManager(new EfBrandDal());
-
-             //brandManager.Add(new Brand { BrandId = 2, Name = "BMW" });
-             // Ekledikten sonra aynı ıd de bir daha ekleyemeyeceği için hata veriyor
-            foreach (var brands in brandManager.GetAll())
-            {
-                System.Console.WriteLine(brands.BrandId);
-            }
-            ColorManager colorManager = new ColorManager(new EfColorDal());
-             //colorManager.Add(new Color { ColorId = 2, Name = "Red" });
+            //fg keyleri ata
+           
         }
     }
 }

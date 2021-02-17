@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -16,39 +18,42 @@ namespace Business.Concrete
             _brandDal = brandDal;
         }
 
-        public void Add(Brand brand)
+
+        IResult IBaseService<Brand>.Add(Brand brand)
         {
-            if (brand.Name.Length > 2)
+            if(brand.BrandName.Length > 2)
             {
                 _brandDal.Add(brand);
-                Console.WriteLine("Marka başarı ile eklendi.");
+                return new SuccessResult(Messages.Added);
             }
             else
             {
-                Console.WriteLine("Marka ekleme işlemi başarısız! Marka ismi en az 2 karakterden oluşmalıdır.");
+                return new ErrorResult(Messages.Failed);
             }
         }
 
-        public void Delete(Brand brand)
+        IResult IBaseService<Brand>.Delete(Brand brand)
         {
             _brandDal.Delete(brand);
+            return new SuccessResult(Messages.Deleted);
         }
 
-        public List<Brand> GetAll()
+        IDataResult<List<Brand>> IBaseService<Brand>.GetAll()
         {
-            return _brandDal.GetAll();
+
+            return new SuccessDataResult<List<Brand>>(_brandDal.GetAll(),Messages.Listed);
         }
 
-        public void Update(Brand brand)
+        IResult IBaseService<Brand>.Update(Brand brand)
         {
-            if (brand.Name.Length > 2 )
+            if (brand.BrandName.Length > 2)
             {
                 _brandDal.Add(brand);
-                Console.WriteLine("Marka başarı ile güncellendi.");
+                return new SuccessResult(Messages.Updated);
             }
             else
             {
-                Console.WriteLine("Marka güncelleme işlemi başarısız! Marka ismi en az 2 karakterden oluşmalıdır.");
+                return new ErrorResult(Messages.Failed);
             }
         }
     }
